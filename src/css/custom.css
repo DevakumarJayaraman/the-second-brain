@@ -1,0 +1,172 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Light Theme Variables */
+:root {
+  --ifm-color-primary: #3b82f6;
+  --ifm-color-primary-dark: #2563eb;
+  --ifm-color-primary-darker: #1d4ed8;
+  --ifm-color-primary-darkest: #1e40af;
+  --ifm-color-primary-light: #60a5fa;
+  --ifm-color-primary-lighter: #93c5fd;
+  --ifm-color-primary-lightest: #bfdbfe;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  
+  /* Custom card variables - Light */
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --card-shadow: rgba(0, 0, 0, 0.08);
+  --card-shadow-hover: rgba(59, 130, 246, 0.15);
+  --card-text: #374151;
+  --card-text-muted: #6b7280;
+  --page-bg: #f9fafb;
+  --hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Dark Theme Variables */
+[data-theme='dark'] {
+  --ifm-color-primary: #60a5fa;
+  --ifm-color-primary-dark: #3b82f6;
+  --ifm-color-primary-darker: #2563eb;
+  --ifm-color-primary-darkest: #1d4ed8;
+  --ifm-color-primary-light: #93c5fd;
+  --ifm-color-primary-lighter: #bfdbfe;
+  --ifm-color-primary-lightest: #dbeafe;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  
+  /* Uniform dark background color */
+  --ifm-background-color: #0f172a;
+  --ifm-navbar-background-color: #0f172a;
+  --ifm-footer-background-color: #0f172a;
+  --ifm-background-surface-color: #1e293b;
+  
+  /* Custom card variables - Dark */
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --card-shadow: rgba(0, 0, 0, 0.4);
+  --card-shadow-hover: rgba(96, 165, 250, 0.25);
+  --card-text: #f1f5f9;
+  --card-text-muted: #94a3b8;
+  --page-bg: #0f172a;
+  --hero-gradient: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+}
+
+/* Dark theme uniform styling */
+[data-theme='dark'] .navbar {
+  background-color: #0f172a;
+  border-bottom: 1px solid #1e293b;
+}
+
+[data-theme='dark'] .footer {
+  background-color: #0f172a;
+  border-top: 1px solid #1e293b;
+}
+
+[data-theme='dark'] .footer--dark {
+  --ifm-footer-background-color: #0f172a;
+  background-color: #0f172a;
+}
+
+[data-theme='dark'] .main-wrapper {
+  background-color: #0f172a;
+}
+
+/* Homepage Styles */
+.homepage-container {
+  min-height: calc(100vh - 60px);
+  background: var(--page-bg);
+  padding: 3rem 2rem;
+}
+
+.homepage-hero {
+  text-align: center;
+  margin-bottom: 4rem;
+}
+
+.homepage-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--hero-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem;
+}
+
+.homepage-hero p {
+  font-size: 1.25rem;
+  color: var(--card-text-muted);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Card Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Individual Card */
+.doc-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--card-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.doc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px var(--card-shadow-hover);
+  border-color: var(--ifm-color-primary);
+}
+
+.doc-card:hover .card-icon {
+  transform: scale(1.1);
+}
+
+.card-icon {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--card-text);
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: var(--card-text-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .homepage-hero h1 {
+    font-size: 2.25rem;
+  }
+  
+  .cards-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+}
