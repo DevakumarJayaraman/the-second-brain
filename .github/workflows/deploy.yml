@@ -39,35 +39,40 @@ jobs:
         run: |
           ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
             ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
-            "mkdir -p /applications/second-brain && mkdir -p /backups/applications/second-brain"
+            "mkdir -p /applications/second-brain/versions && mkdir -p /applications/second-brain/.backups"
 
-      - name: 💾 Backup current deployment
+      - name: 💾 Save previous version pointer
         run: |
           ssh -i ~/.ssh/deploy_key \
             ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'EOF'
-            if [ -d "/applications/second-brain" ] && [ "$(ls -A /applications/second-brain)" ]; then
-              BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S)"
-              cp -r /applications/second-brain /backups/applications/second-brain/${BACKUP_NAME}
-              # Keep only last 5 backups
-              cd /backups/applications/second-brain
-              ls -dt backup_* 2>/dev/null | tail -n +6 | xargs rm -rf 2>/dev/null || true
+            if [ -L "/applications/second-brain/latest" ]; then
+              PREVIOUS=$(readlink /applications/second-brain/latest)
+              echo "$PREVIOUS" > /applications/second-brain/.backups/previous_version
             fi
           EOF
 
       - name: 🚀 Deploy to DigitalOcean
         run: |
+          DEPLOY_VERSION="v_$(date +%Y%m%d_%H%M%S)"
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
+            "mkdir -p /applications/second-brain/versions/$DEPLOY_VERSION"
           rsync -avz --delete \
             -e "ssh -i ~/.ssh/deploy_key" \
             ./build/ \
-            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/applications/second-brain/
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/applications/second-brain/versions/$DEPLOY_VERSION/
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
+            "rm -f /applications/second-brain/latest && ln -s /applications/second-brain/versions/$DEPLOY_VERSION /applications/second-brain/latest && echo $DEPLOY_VERSION > /applications/second-brain/.backups/current_version"
 
       - name: 🔧 Set permissions and restart nginx
         run: |
           ssh -i ~/.ssh/deploy_key \
             ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'EOF'
-            chown -R www-data:www-data /applications/second-brain
-            find /applications/second-brain -type d -exec chmod 755 {} \;
-            find /applications/second-brain -type f -exec chmod 644 {} \;
+            LATEST_PATH=$(readlink /applications/second-brain/latest)
+            chown -R www-data:www-data "$LATEST_PATH"
+            find "$LATEST_PATH" -type d -exec chmod 755 {} \;
+            find "$LATEST_PATH" -type f -exec chmod 644 {} \;
             nginx -t && systemctl reload nginx
           EOF
 
@@ -79,7 +84,33 @@ jobs:
             echo "✅ Deployment successful! Site is live."
           else
             echo "⚠️ Site returned HTTP $HTTP_STATUS"
+            exit 1
           fi
+
+      - name: 🔄 Rollback on failure
+        if: failure()
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'EOF'
+            if [ -f "/applications/second-brain/.backups/previous_version" ]; then
+              PREVIOUS=$(cat /applications/second-brain/.backups/previous_version)
+              if [ -d "/applications/second-brain/versions/$PREVIOUS" ]; then
+                rm -f /applications/second-brain/latest
+                ln -s /applications/second-brain/versions/$PREVIOUS /applications/second-brain/latest
+                chown -R www-data:www-data "/applications/second-brain/versions/$PREVIOUS"
+                find "/applications/second-brain/versions/$PREVIOUS" -type d -exec chmod 755 {} \;
+                find "/applications/second-brain/versions/$PREVIOUS" -type f -exec chmod 644 {} \;
+                systemctl reload nginx
+                echo "🔄 Rolled back to: $PREVIOUS"
+              else
+                echo "❌ Previous version directory not found: $PREVIOUS"
+                exit 1
+              fi
+            else
+              echo "❌ No previous version found for rollback"
+              exit 1
+            fi
+          EOF
 
       - name: 🧹 Cleanup SSH key
         if: always()
