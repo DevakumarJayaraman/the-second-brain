@@ -24,7 +24,7 @@ A simple comparison to help you understand when to use what.
 | **First Release** | 2014 | 2011 (OpenShift v3+ uses K8s since 2015) |
 | **Governance** | CNCF (Cloud Native Computing Foundation) | Red Hat (IBM subsidiary) |
 | **Analogy** | Linux kernel | Red Hat Enterprise Linux (RHEL) |
-| **Cost** | Free & Open Source | Paid (with support) |
+| **Cost** | Free (Open Source) | Paid (with support) |
 | **License** | Apache 2.0 | Apache 2.0 (core) + Proprietary features |
 
 > **Simple way to think about it:** Kubernetes is the engine, OpenShift is the car with the engine + dashboard + GPS + airbags.
@@ -52,7 +52,7 @@ A simple comparison to help you understand when to use what.
 - **Cloud Providers** - AWS (EKS), Google (GKE), Azure (AKS), etc.
 - **Tech Giants** - Google, Microsoft, Red Hat, IBM, VMware
 - **End Users** - Fortune 500 companies, startups, government
-- **Contributors** - 70,000+ developers worldwide
+- **Contributors** - Thousands of developers worldwide (70,000+ as of 2026)
 - **Vendors** - Tool makers (Helm, Rancher, Istio, etc.)
 
 **OpenShift Stakeholders:**
@@ -75,7 +75,9 @@ Before diving into Kubernetes and OpenShift, let's understand how containers dif
 |---|---|---|
 | **What** | Full computer virtualization | Application-level virtualization |
 | **OS** | Each VM has its own full OS | Shares host OS kernel |
-| **Size** | GBs (2-20 GB typical) | MBs (50-200 MB typical) |
+| **Size** | GBs (2-20 GB typical)* | MBs (50-200 MB typical)* |
+
+*Sizes vary based on application and OS requirements
 | **Startup** | Minutes | Seconds |
 | **Isolation** | Hardware-level (hypervisor) | Process-level (namespaces, cgroups) |
 
@@ -172,7 +174,7 @@ Before diving into Kubernetes and OpenShift, let's understand how containers dif
 - **Efficient Updates** - Layer-based, only update what changed
 
 **❌ Cons:**
-- **OS Limitation** - Linux containers need Linux host (mostly)
+- **OS Limitation** - Linux containers need Linux host (Windows containers available for Windows hosts)
 - **Security Trade-off** - Shared kernel = potential attack vector
 - **Complexity** - Learning curve for orchestration (K8s)
 - **Not for Everything** - Legacy monoliths may struggle
@@ -189,7 +191,7 @@ Before diving into Kubernetes and OpenShift, let's understand how containers dif
 | **Highly Regulated Industries** | VMs or OpenShift | Stronger isolation, compliance needs |
 | **Development/Testing** | Containers | Faster setup, tear down, iteration |
 | **Running Windows Apps** | Virtual Machines | (or Windows Containers on Windows host) |
-| **Database Workloads** | Both (depends) | VMs for legacy, Containers for cloud-native DBs |
+| **Database Workloads** | VMs (traditionally) or Containers (cloud-native) | VMs for legacy, Containers for cloud-native DBs |
 | **Stateless Applications** | Containers | Perfect use case, scales easily |
 | **Stateful Applications** | Both (careful design) | VMs easier, Containers need StatefulSets |
 | **Maximum Isolation Needed** | Virtual Machines | Hardware-level security |
