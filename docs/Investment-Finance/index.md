@@ -1,5 +1,5 @@
 ---
-title: Finance
+title: Banking & Investments 
 sidebar_position: 1
 displayed_sidebar: financeSidebar
 tags:

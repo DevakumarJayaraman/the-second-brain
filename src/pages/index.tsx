@@ -11,10 +11,10 @@ const docFolders = [
     path: "/Technology/"
   },
   {
-    name: "Finance",
+    name: "Investment & Finance",
     icon: "💰",
     description: "Investment strategies, Market analysis, and Financial planning",
-    path: "/Finance/"
+    path: "/Investment-Finance/"
   },
   {
     name: "General",

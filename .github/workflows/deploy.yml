@@ -1,0 +1,86 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - master
+      - main
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: 📚 Install dependencies
+        run: npm ci
+
+      - name: 🔨 Build Docusaurus site
+        run: npm run build
+
+      - name: 🔑 Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
+
+      - name: 📁 Create remote directories
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
+            "mkdir -p /applications/second-brain && mkdir -p /backups/applications/second-brain"
+
+      - name: 💾 Backup current deployment
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'EOF'
+            if [ -d "/applications/second-brain" ] && [ "$(ls -A /applications/second-brain)" ]; then
+              BACKUP_NAME="backup_$(date +%Y%m%d_%H%M%S)"
+              cp -r /applications/second-brain /backups/applications/second-brain/${BACKUP_NAME}
+              # Keep only last 5 backups
+              cd /backups/applications/second-brain
+              ls -dt backup_* 2>/dev/null | tail -n +6 | xargs rm -rf 2>/dev/null || true
+            fi
+          EOF
+
+      - name: 🚀 Deploy to DigitalOcean
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key" \
+            ./build/ \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }}:/applications/second-brain/
+
+      - name: 🔧 Set permissions and restart nginx
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} << 'EOF'
+            chown -R www-data:www-data /applications/second-brain
+            find /applications/second-brain -type d -exec chmod 755 {} \;
+            find /applications/second-brain -type f -exec chmod 644 {} \;
+            nginx -t && systemctl reload nginx
+          EOF
+
+      - name: ✅ Verify deployment
+        run: |
+          sleep 3
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${{ secrets.DROPLET_IP }}" || echo "000")
+          if [ "$HTTP_STATUS" = "200" ]; then
+            echo "✅ Deployment successful! Site is live."
+          else
+            echo "⚠️ Site returned HTTP $HTTP_STATUS"
+          fi
+
+      - name: 🧹 Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
