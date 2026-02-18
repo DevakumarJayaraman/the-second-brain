@@ -83,12 +83,12 @@ Public Key Algorithm: rsaEncryption (2048 bit)
 
 ### Regular TLS (HTTPS) - One-Way Authentication
 
-### The Analogy: Hotel Check-In 🏨
+### The Analogy: Shopping at a Store 🏪
 
-**When you check into a hotel:**
-- ✅ The hotel shows you their business license (server shows certificate)
-- ✅ You verify it's a legitimate hotel (browser verifies server certificate)
-- ❌ The hotel doesn't verify YOUR ID (server accepts any client)
+**When you walk into a store to browse:**
+- ✅ The store displays its business license (server shows certificate)
+- ✅ You verify it's a legitimate business (browser verifies server certificate)
+- ❌ The store doesn't check YOUR ID just for browsing (server accepts any client)
 
 ```
 Browser                              Website
