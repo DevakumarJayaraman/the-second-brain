@@ -133,9 +133,7 @@ def summarize_logs(log_content: str, max_tokens: int = 500) -> dict:
 Format your response clearly with these sections.
 
 LOGS:
-```
-{log_content}
-```
+{{log_content}}
 """
     
     try:
@@ -274,7 +272,7 @@ class LogAnalyzer:
 }}
 
 LOGS:
-{log_content}
+{{log_content}}
 """
         
         try:
@@ -457,7 +455,7 @@ class LogMonitor:
 }}
 
 LOGS:
-{logs_text}
+{{logs_text}}
 """
         
         try:
@@ -514,22 +512,22 @@ LOGS:
     def send_alert(self, analysis: dict):
         """Send alert (print to console, in production send to Slack/email/PagerDuty)"""
         
-        severity_emoji = {
+        severity_emoji = {{
             'low': '🟢',
             'medium': '🟡',
             'high': '🟠',
             'critical': '🔴'
-        }
+        }}
         
         emoji = severity_emoji.get(analysis['severity'], '⚪')
         
         alert = f"""
-{'='*50}
-{emoji} ALERT: {analysis['severity'].upper()}
-{'='*50}
-{analysis['alert_message']}
-Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-{'='*50}
+{{'='*50}}
+{{emoji}} ALERT: {{analysis['severity'].upper()}}
+{{'='*50}}
+{{analysis['alert_message']}}
+Time: {{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}}
+{{'='*50}}
 """
         print(alert)
         
