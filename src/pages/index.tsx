@@ -17,12 +17,6 @@ const docFolders = [
     path: "/Finance/"
   },
   {
-    name: "Health & Wellness",
-    icon: "🧘‍♂️",
-    description: "Nutrition, Fitness, Mental Health, and Overall Well-being",
-    path: "/Health-Wellness/"
-  },
-  {
     name: "Personal Development",
     icon: "🚀",
     description: "Self-improvement, Career growth, and Soft skills",    
