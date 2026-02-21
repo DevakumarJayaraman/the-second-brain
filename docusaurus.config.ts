@@ -85,17 +85,9 @@ const config: Config = {
       title: "The Second Brain",
       items: [
         {
-          type: 'dropdown',
-          label: '🏷️ Tags',
+          label: '🏷️ All Tags',
+          to: '/tags',
           position: 'right',
-          items: [
-            { to: '/tags', label: '📋 All Tags' },
-            { to: '/tags/kubernetes', label: 'kubernetes' },
-            { to: '/tags/devops', label: 'devops' },
-            { to: '/tags/cheatsheet', label: 'cheatsheet' },
-            { to: '/tags/unix', label: 'unix' },
-            { to: '/tags/linux', label: 'linux' },
-          ],
         },
       ],
     },

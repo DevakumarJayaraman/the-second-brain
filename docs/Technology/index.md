@@ -4,20 +4,22 @@ sidebar_position: 1
 displayed_sidebar: technologySidebar
 tags:
   - technology
-  - devops
   - programming
+  - devops
+  - cloud
+  - security
+description: Complete technology guides covering programming, DevOps, cloud solutions, security, and UI development.
 ---
 
-# Technology
+# 💻 Technology
 
-Welcome to the Technology section. This area covers technical topics including software development, system architecture, DevOps practices, and emerging technologies.
+Welcome to the Technology section. This area covers technical topics including software development, system architecture, DevOps practices, cloud solutions, security, and UI development.
 
----
+## 📚 Browse by Category
 
-## 📂 Browse Content
+Use the sidebar on the left to explore content organized by category:
 
-- 📁 **Kubernetes**
-  - [CodeReady Containers (CRC) Setup Guide](./Kubernetes/crc_container.md)
-  - [Kubernetes Cheatsheet](./Kubernetes/kube_cheatsheet.md)
-- 📁 **UNIX**
-  - [UNIX/Linux Cheatsheet](./UNIX/unix_cheatsheet.md)
+- **Cloud Solutions** - AWS, Azure, GCP, Kubernetes, and containerization
+- **OS Commands** - Linux, macOS, Unix, and shell scripting
+- **Security** - API authentication, TLS/SSL, JWT, OAuth, mTLS, and cryptography
+- **UI Programming** - React, TypeScript, CSS, Tailwind, and frontend development

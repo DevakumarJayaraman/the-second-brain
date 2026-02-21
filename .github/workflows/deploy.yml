@@ -53,7 +53,9 @@ jobs:
 
       - name: 🚀 Deploy to DigitalOcean
         run: |
-          DEPLOY_VERSION="v_$(date +%Y%m%d_%H%M%S)"
+          COMMIT_ID="${{ github.sha }}"
+          COMMIT_SHORT="${COMMIT_ID:0:7}"
+          DEPLOY_VERSION="v_$(date +%Y%m%d_%H%M%S)_${COMMIT_SHORT}"
           ssh -i ~/.ssh/deploy_key \
             ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
             "mkdir -p /applications/second-brain/versions/$DEPLOY_VERSION"
@@ -64,6 +66,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
             "rm -f /applications/second-brain/latest && ln -s /applications/second-brain/versions/$DEPLOY_VERSION /applications/second-brain/latest && echo $DEPLOY_VERSION > /applications/second-brain/.backups/current_version"
+          echo "📦 Deployed version: $DEPLOY_VERSION"
 
       - name: 🔧 Set permissions and restart nginx
         run: |
@@ -79,11 +82,25 @@ jobs:
       - name: ✅ Verify deployment
         run: |
           sleep 3
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "http://${{ secrets.DROPLET_IP }}" || echo "000")
-          if [ "$HTTP_STATUS" = "200" ]; then
-            echo "✅ Deployment successful! Site is live."
+          echo "Verifying deployment..."
+          
+          # Check nginx status on droplet
+          NGINX_STATUS=$(ssh -i ~/.ssh/deploy_key \
+            ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
+            "systemctl is-active nginx" || echo "inactive")
+          echo "Nginx status: $NGINX_STATUS"
+          
+          # Try accessing by domain first, then by IP
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: second-brain.dkbrainhub.com" "http://${{ secrets.DROPLET_IP }}" || echo "000")
+          echo "HTTP Status for domain: $HTTP_STATUS"
+          
+          if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "301" ] || [ "$HTTP_STATUS" = "302" ]; then
+            echo "✅ Deployment successful! Site is live (HTTP $HTTP_STATUS)."
           else
-            echo "⚠️ Site returned HTTP $HTTP_STATUS"
+            echo "⚠️ Site returned HTTP $HTTP_STATUS - checking nginx config..."
+            ssh -i ~/.ssh/deploy_key \
+              ${{ secrets.DROPLET_USER }}@${{ secrets.DROPLET_IP }} \
+              "sudo tail -20 /var/log/nginx/error.log"
             exit 1
           fi
 
