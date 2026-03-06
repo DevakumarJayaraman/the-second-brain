@@ -11,6 +11,12 @@ const docFolders = [
     path: "/Technology/"
   },
   {
+    name: "Artificial Intelligence",
+    icon: "🤖",
+    description: "Machine Learning, Deep Learning, and AI Research",
+    path: "/Artificial Intelligence/"
+  },
+  {
     name: "Finance",
     icon: "💰",
     description: "Investment strategies, Banking, and Financial planning",

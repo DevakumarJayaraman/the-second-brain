@@ -1,6 +1,6 @@
 ---
 title: Log Summarization with AI
-sidebar_position: 3
+sidebar_position: 5
 displayed_sidebar: aiSidebar
 tags:
   - llm

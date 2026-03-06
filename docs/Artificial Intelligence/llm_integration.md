@@ -1,6 +1,6 @@
 ---
 title: Integrating LLMs into Simple Apps
-sidebar_position: 1
+sidebar_position: 4
 displayed_sidebar: aiSidebar
 tags:
   - llm
